@@ -1,0 +1,21 @@
+[Unit]
+Description=Berlin 1945 web host (terminal game bridge)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tank
+WorkingDirectory=/srv/berlin1945-web
+Environment=TANK_GAME=/srv/tank-demo/game.py
+Environment=TANK_AUTOPLAY=/srv/tank-demo/autoplay.py
+Environment=TANK_MAX_SESSIONS=4
+Environment=TANK_MIN_FREE_MB=150
+ExecStart=/srv/berlin1945-web/.venv/bin/python -m uvicorn tank_host.app:app --host 127.0.0.1 --port 8100
+Restart=always
+RestartSec=5
+# 服务一停，子进程（游戏）跟着死：代码里还给了 PR_SET_PDEATHSIG 双保险
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target
