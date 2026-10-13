@@ -1,0 +1,1 @@
+window.TANK_API = '';window.BK_TXT = {"noRoute": "开一局后，这里会画出你实际走过的路线。"};

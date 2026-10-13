@@ -45,9 +45,19 @@ def main():
     ap.add_argument('--api', default='', help='宿主服务地址；留空 = 同域')
     ap.add_argument('--lang', default='zh', choices=('zh', 'en'))
     a = ap.parse_args()
-    sys.stdout.write(TPL % {'lang': 'zh-CN' if a.lang == 'zh' else 'en',
-                            'host': ui.HOST_REPO, 'game': ui.REPO,
-                            'body': ui.page_body(a.lang == 'zh', a.api)})
+    out = TPL % {'lang': 'zh-CN' if a.lang == 'zh' else 'en',
+                 'host': ui.HOST_REPO, 'game': ui.REPO,
+                 'body': ui.page_body(a.lang == 'zh', a.api)}
+    # 显式按 UTF-8 写：Windows 控制台默认 GBK，页面里只要有一个非 GBK 字符
+    # （中文标点以外，比如圆点、对勾）就会 UnicodeEncodeError，而且报的是
+    # 一句和真正原因毫无关系的编码错。
+    try:
+        buf = sys.stdout.buffer
+    except AttributeError:                     # 被重定向成非缓冲对象时退回文本写
+        sys.stdout.write(out)
+    else:
+        buf.write(out.encode('utf-8'))
+        buf.flush()
     return 0
 
 
