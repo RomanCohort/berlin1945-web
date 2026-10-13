@@ -1,4 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
-*.html
+*.html# 测试/校验跑出来的中间文件
+sa_*.js
+tests/parse_test.js
+
